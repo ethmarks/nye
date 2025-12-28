@@ -1,23 +1,34 @@
+<script>
+    let dateString = $state("");
+    let title = $state("Not New Year Yet*");
+    let subtitle = $state("*99.73% Accurate");
+    let days = $state("??");
+    let hours = $state("??");
+    let minutes = $state("??");
+    let seconds = $state("??");
+</script>
+
 <header class="header">
-    <h1 class="title">Not New Year Yet*</h1>
-    <div class="subtitle">*99.73% Accurate</div>
+    <div class="date-display">{dateString}</div>
+    <h1 class="title">{title}</h1>
+    <div class="subtitle">{subtitle}</div>
 </header>
 
 <div class="countdown">
     <div class="time-unit">
-        <span class="time-value">??</span>
+        <span class="time-value">{days}</span>
         <span class="time-label">Days</span>
     </div>
     <div class="time-unit">
-        <span class="time-value">??</span>
+        <span class="time-value">{hours}</span>
         <span class="time-label">Hours</span>
     </div>
     <div class="time-unit">
-        <span class="time-value">??</span>
+        <span class="time-value">{minutes}</span>
         <span class="time-label">Minutes</span>
     </div>
     <div class="time-unit">
-        <span class="time-value">??</span>
+        <span class="time-value">{seconds}</span>
         <span class="time-label">Seconds</span>
     </div>
 </div>
