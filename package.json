@@ -1,20 +1,36 @@
 {
-	"name": "nye",
-	"private": true,
-	"version": "0.0.1",
-	"type": "module",
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''"
-	},
-	"devDependencies": {
-		"@sveltejs/adapter-auto": "^7.0.0",
-		"@sveltejs/adapter-static": "^3.0.10",
-		"@sveltejs/kit": "^2.49.1",
-		"@sveltejs/vite-plugin-svelte": "^6.2.1",
-		"svelte": "^5.45.6",
-		"vite": "^7.2.6"
-	}
+  "name": "nye",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A New Year countdown clock",
+  "type": "module",
+  "author": "ethmarks",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethmarks/nye.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ethmarks/nye/issues"
+  },
+  "homepage": "https://nye-ethmarks.vercel.app/",
+  "keywords": [
+    "svelte",
+    "sveltekit",
+    "vite"
+  ],
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^7.0.0",
+    "@sveltejs/adapter-static": "^3.0.10",
+    "@sveltejs/kit": "^2.49.1",
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "svelte": "^5.45.6",
+    "vite": "^7.2.6"
+  }
 }
