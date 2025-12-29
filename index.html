@@ -23,5 +23,24 @@
                 target: document.getElementById("app"),
             });
         </script>
+
+        <noscript>
+            <p id="noscript">Please enable JavaScript</p>
+
+            <style>
+            #app {
+                display: none;
+            }
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+            }
+            #noscript {
+                font-size: 3rem;
+            }
+            </style>
+        </noscript>
     </body>
 </html>

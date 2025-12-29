@@ -84,10 +84,6 @@
         </div>
     </div>
 
-    <noscript>
-        <p id="noscript">Please enable JavaScript for full functionality</p>
-    </noscript>
-
     <footer>
         <div id="decorative-line"></div>
         <div id="credits">
@@ -333,12 +329,6 @@
         color: var(--charcoal);
         opacity: 0.5;
         font-family: var(--font-mono);
-    }
-
-    #noscript {
-        font-family: var(--font-mono);
-        text-align: center;
-        color: var(--midnight-blue);
     }
 
     footer {
