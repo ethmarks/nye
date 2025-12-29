@@ -93,7 +93,6 @@
                 rel="noopener noreferrer">ethmarks</a
             >
         </div>
-        <div id="year">{currentYear}</div>
     </footer>
 </div>
 
@@ -346,14 +345,6 @@
             transparent
         );
         margin-bottom: 1.5rem;
-    }
-
-    #year {
-        font-family: var(--font-mono);
-        font-size: 0.7rem;
-        letter-spacing: 2px;
-        color: var(--charcoal);
-        opacity: 0.3;
     }
 
     #credits {
