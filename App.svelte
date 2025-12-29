@@ -1,5 +1,8 @@
 <script>
     import { onMount } from "svelte";
+    import { inject } from "@vercel/analytics";
+
+    inject();
 
     let now = $state(new Date());
 

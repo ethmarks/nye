@@ -28,5 +28,8 @@
     "svelte": "^5.45.6",
     "vite": "^7.2.6",
     "vite-plugin-singlefile": "^2.3.0"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.6.1"
   }
 }
