@@ -1,7 +1,36 @@
 <script>
     import { onMount } from "svelte";
+    import { invalidate } from "$app/navigation";
+
+    let { data } = $props();
 
     let now = $state(new Date());
+
+    // Helper to get date in user's timezone
+    function getDateInTimezone(date, timezone) {
+        const formatter = new Intl.DateTimeFormat("en-US", {
+            timeZone: timezone,
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false,
+        });
+
+        const parts = formatter.formatToParts(date);
+        const getValue = (type) => parts.find((p) => p.type === type)?.value;
+
+        return {
+            year: parseInt(getValue("year")),
+            month: parseInt(getValue("month")),
+            day: parseInt(getValue("day")),
+            hour: parseInt(getValue("hour")),
+            minute: parseInt(getValue("minute")),
+            second: parseInt(getValue("second")),
+        };
+    }
 
     let dateString = $derived(
         now.toLocaleDateString("en-US", {
@@ -9,29 +38,57 @@
             month: "long",
             day: "numeric",
             year: "numeric",
+            timeZone: data.timezone,
         }),
     );
-    let currentYear = $derived(now.getFullYear());
-    let isNYD = $derived(now.getMonth() === 0 && now.getDate() === 1);
-    let newyear = $derived(new Date(currentYear + 1, 0, 1, 0, 0, 0));
-    const diff = $derived(newyear - now);
+
+    let dateParts = $derived(getDateInTimezone(now, data.timezone));
+    let currentYear = $derived(dateParts.year);
+    let isNYD = $derived(dateParts.month === 1 && dateParts.day === 1);
+
+    // Calculate time until New Year in user's timezone
+    const diff = $derived(() => {
+        const nextYear = currentYear + 1;
+        // Create New Year date in UTC
+        const newYearUTC = Date.UTC(nextYear, 0, 1, 0, 0, 0);
+        // Get offset: how many ms ahead/behind is the timezone from UTC at New Year
+        const nyParts = getDateInTimezone(new Date(newYearUTC), data.timezone);
+        const offsetMs =
+            (nyParts.hour * 60 * 60 + nyParts.minute * 60 + nyParts.second) *
+            1000;
+        // Adjust for timezone offset
+        const newYearInTimezone = newYearUTC - offsetMs;
+        return newYearInTimezone - now.getTime();
+    });
 
     let title = $derived(
         isNYD ? `It is ${currentYear}.` : `It's not ${currentYear + 1} Yet`,
     );
     let subtitle = $derived(isNYD ? "Happy New Year!" : "But it will be in...");
-    let days = $derived(isNYD ? 0 : Math.floor(diff / (1000 * 60 * 60 * 24)));
+    let days = $derived(isNYD ? 0 : Math.floor(diff() / (1000 * 60 * 60 * 24)));
     let hours = $derived(
         isNYD
             ? 0
-            : Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            : Math.floor((diff() % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
     );
     let minutes = $derived(
-        isNYD ? 0 : Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+        isNYD ? 0 : Math.floor((diff() % (1000 * 60 * 60)) / (1000 * 60)),
     );
-    let seconds = $derived(isNYD ? 0 : Math.floor((diff % (1000 * 60)) / 1000));
+    let seconds = $derived(
+        isNYD ? 0 : Math.floor((diff() % (1000 * 60)) / 1000),
+    );
 
     onMount(() => {
+        // Check if timezone cookie matches user's actual timezone
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        if (data.timezone !== userTimezone) {
+            // Set the correct timezone cookie
+            document.cookie = `timezone=${userTimezone}; path=/; max-age=31536000; SameSite=Lax`;
+            // Invalidate to reload with correct timezone
+            invalidate("app:timezone");
+        }
+
         const interval = setInterval(() => {
             now = new Date();
         }, 1000);

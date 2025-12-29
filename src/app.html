@@ -4,6 +4,16 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
+		<script>
+			// Set timezone cookie before hydration to prevent SSR mismatch
+			try {
+				const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+				document.cookie = `timezone=${tz}; path=/; max-age=31536000; SameSite=Lax`;
+			} catch (e) {
+				// Fallback to UTC if timezone detection fails
+				document.cookie = 'timezone=UTC; path=/; max-age=31536000; SameSite=Lax';
+			}
+		</script>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
