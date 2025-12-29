@@ -86,6 +86,13 @@
 
     <footer>
         <div id="decorative-line"></div>
+        <div id="chat">
+            Join my <a
+                href="https://kraa.io/nye-2026-chat"
+                target="_blank"
+                rel="noopener noreferrer">Live 2026 Countdown Chat</a
+            >
+        </div>
         <div id="credits">
             Created by <a
                 href="https://github.com/ethmarks"
@@ -345,6 +352,22 @@
             transparent
         );
         margin-bottom: 1.5rem;
+    }
+
+    #chat {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        color: var(--charcoal);
+        margin-bottom: 0.5rem;
+
+        a {
+            color: var(--royal-blue);
+            transition: color 0.3s ease;
+
+            &:hover {
+                color: var(--gold);
+            }
+        }
     }
 
     #credits {
