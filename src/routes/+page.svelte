@@ -66,17 +66,28 @@
         isNYD ? `It is ${currentYear}.` : `It's not ${currentYear + 1} Yet`,
     );
     let subtitle = $derived(isNYD ? "Happy New Year!" : "But it will be in...");
-    let days = $derived(isNYD ? 0 : Math.floor(diff() / (1000 * 60 * 60 * 24)));
+    let days = $derived(
+        (isNYD ? 0 : Math.floor(diff() / (1000 * 60 * 60 * 24)))
+            .toString()
+            .padStart(2, "0"),
+    );
     let hours = $derived(
-        isNYD
+        (isNYD
             ? 0
-            : Math.floor((diff() % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            : Math.floor((diff() % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+        )
+            .toString()
+            .padStart(2, "0"),
     );
     let minutes = $derived(
-        isNYD ? 0 : Math.floor((diff() % (1000 * 60 * 60)) / (1000 * 60)),
+        (isNYD ? 0 : Math.floor((diff() % (1000 * 60 * 60)) / (1000 * 60)))
+            .toString()
+            .padStart(2, "0"),
     );
     let seconds = $derived(
-        isNYD ? 0 : Math.floor((diff() % (1000 * 60)) / 1000),
+        (isNYD ? 0 : Math.floor((diff() % (1000 * 60)) / 1000))
+            .toString()
+            .padStart(2, "0"),
     );
 
     onMount(() => {
