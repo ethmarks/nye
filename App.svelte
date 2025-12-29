@@ -1,36 +1,7 @@
 <script>
     import { onMount } from "svelte";
-    import { invalidate } from "$app/navigation";
-
-    let { data } = $props();
 
     let now = $state(new Date());
-
-    // Helper to get date in user's timezone
-    function getDateInTimezone(date, timezone) {
-        const formatter = new Intl.DateTimeFormat("en-US", {
-            timeZone: timezone,
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric",
-            hour12: false,
-        });
-
-        const parts = formatter.formatToParts(date);
-        const getValue = (type) => parts.find((p) => p.type === type)?.value;
-
-        return {
-            year: parseInt(getValue("year")),
-            month: parseInt(getValue("month")),
-            day: parseInt(getValue("day")),
-            hour: parseInt(getValue("hour")),
-            minute: parseInt(getValue("minute")),
-            second: parseInt(getValue("second")),
-        };
-    }
 
     let dateString = $derived(
         now.toLocaleDateString("en-US", {
@@ -38,69 +9,45 @@
             month: "long",
             day: "numeric",
             year: "numeric",
-            timeZone: data.timezone,
         }),
     );
 
-    let dateParts = $derived(getDateInTimezone(now, data.timezone));
-    let currentYear = $derived(dateParts.year);
-    let isNYD = $derived(dateParts.month === 1 && dateParts.day === 1);
+    let currentYear = $derived(now.getFullYear());
+    let currentMonth = $derived(now.getMonth() + 1);
+    let currentDay = $derived(now.getDate());
+    let isNYD = $derived(currentMonth === 1 && currentDay === 1);
 
-    // Calculate time until New Year in user's timezone
-    const diff = $derived(() => {
-        const nextYear = currentYear + 1;
-        const newYearUTC = Date.UTC(nextYear, 0, 1, 0, 0, 0);
-        const parts = getDateInTimezone(new Date(newYearUTC), data.timezone);
-        const offsetMs =
-            parts.day === 31
-                ? (24 - parts.hour) * 3600000 -
-                  parts.minute * 60000 -
-                  parts.second * 1000
-                : -parts.hour * 3600000 -
-                  parts.minute * 60000 -
-                  parts.second * 1000;
-        return newYearUTC + offsetMs - now.getTime();
-    });
+    const diff = $derived(new Date(currentYear + 1, 0, 1, 0, 0, 0, 0) - now);
 
     let title = $derived(
         isNYD ? `It is ${currentYear}.` : `It's not ${currentYear + 1} Yet`,
     );
     let subtitle = $derived(isNYD ? "Happy New Year!" : "But it will be in...");
     let days = $derived(
-        (isNYD ? 0 : Math.floor(diff() / (1000 * 60 * 60 * 24)))
+        (isNYD ? 0 : Math.floor(diff / (1000 * 60 * 60 * 24)))
             .toString()
             .padStart(2, "0"),
     );
     let hours = $derived(
         (isNYD
             ? 0
-            : Math.floor((diff() % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+            : Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
         )
             .toString()
             .padStart(2, "0"),
     );
     let minutes = $derived(
-        (isNYD ? 0 : Math.floor((diff() % (1000 * 60 * 60)) / (1000 * 60)))
+        (isNYD ? 0 : Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)))
             .toString()
             .padStart(2, "0"),
     );
     let seconds = $derived(
-        (isNYD ? 0 : Math.floor((diff() % (1000 * 60)) / 1000))
+        (isNYD ? 0 : Math.floor((diff % (1000 * 60)) / 1000))
             .toString()
             .padStart(2, "0"),
     );
 
     onMount(() => {
-        // Check if timezone cookie matches user's actual timezone
-        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-        if (data.timezone !== userTimezone) {
-            // Set the correct timezone cookie
-            document.cookie = `timezone=${userTimezone}; path=/; max-age=31536000; SameSite=Lax`;
-            // Invalidate to reload with correct timezone
-            invalidate("app:timezone");
-        }
-
         const interval = setInterval(() => {
             now = new Date();
         }, 1000);
@@ -136,10 +83,6 @@
             <span class="time-label">Seconds</span>
         </div>
     </div>
-
-    <noscript>
-        <p id="noscript">Please enable JavaScript for full functionality</p>
-    </noscript>
 
     <footer>
         <div id="decorative-line"></div>
@@ -185,12 +128,17 @@
             var(--royal-blue) 100%
         );
         min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         color: var(--cream);
         position: relative;
         overflow-x: hidden;
+    }
+
+    :global(#app) {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
     }
 
     #stars {
@@ -381,12 +329,6 @@
         color: var(--charcoal);
         opacity: 0.5;
         font-family: var(--font-mono);
-    }
-
-    #noscript {
-        font-family: var(--font-mono);
-        text-align: center;
-        color: var(--midnight-blue);
     }
 
     footer {
