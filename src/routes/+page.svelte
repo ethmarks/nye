@@ -49,16 +49,17 @@
     // Calculate time until New Year in user's timezone
     const diff = $derived(() => {
         const nextYear = currentYear + 1;
-        // Create New Year date in UTC
         const newYearUTC = Date.UTC(nextYear, 0, 1, 0, 0, 0);
-        // Get offset: how many ms ahead/behind is the timezone from UTC at New Year
-        const nyParts = getDateInTimezone(new Date(newYearUTC), data.timezone);
+        const parts = getDateInTimezone(new Date(newYearUTC), data.timezone);
         const offsetMs =
-            (nyParts.hour * 60 * 60 + nyParts.minute * 60 + nyParts.second) *
-            1000;
-        // Adjust for timezone offset
-        const newYearInTimezone = newYearUTC - offsetMs;
-        return newYearInTimezone - now.getTime();
+            parts.day === 31
+                ? (24 - parts.hour) * 3600000 -
+                  parts.minute * 60000 -
+                  parts.second * 1000
+                : -parts.hour * 3600000 -
+                  parts.minute * 60000 -
+                  parts.second * 1000;
+        return newYearUTC + offsetMs - now.getTime();
     });
 
     let title = $derived(
