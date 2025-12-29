@@ -1,63 +1,42 @@
 <script>
     import { onMount } from "svelte";
 
-    let dateString = $derived(getDateString());
-    let currentYear = $derived(getYear());
-    let title = $derived("Not New Year Yet*");
-    let subtitle = $derived("*99.73% Accurate");
-    let days = $derived("??");
-    let hours = $derived("??");
-    let minutes = $derived("??");
-    let seconds = $derived("??");
+    let now = $state(new Date());
 
-    function getDateString(date = new Date()) {
-        return date.toLocaleDateString("en-US", {
+    let dateString = $derived(
+        now.toLocaleDateString("en-US", {
             weekday: "long",
             month: "long",
             day: "numeric",
             year: "numeric",
-        });
-    }
+        }),
+    );
+    let currentYear = $derived(now.getFullYear());
+    let isNYD = $derived(now.getMonth() === 0 && now.getDate() === 1);
+    let newyear = $derived(new Date(currentYear + 1, 0, 1, 0, 0, 0));
+    const diff = $derived(newyear - now);
 
-    function getYear(date = new Date()) {
-        return date.getFullYear();
-    }
-
-    function updateCountdown() {
-        dateString = getDateString();
-        currentYear = getYear();
-
-        const now = new Date();
-        const isNYD = now.getMonth() === 0 && now.getDate() === 1;
-        let newyear = new Date(currentYear + 1, 0, 1, 0, 0, 0);
-        const diff = newyear - now;
-
-        if (isNYD) {
-            days = 0;
-            hours = 0;
-            minutes = 0;
-            seconds = 0;
-        } else {
-            days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            hours = Math.floor(
-                (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-            );
-            minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        }
-
-        if (isNYD) {
-            title = `It is ${currentYear}.`;
-            subtitle = `Happy New Year!`;
-        } else {
-            title = `It's not ${currentYear + 1} Yet`;
-            subtitle = "But it will be in...";
-        }
-    }
+    let title = $derived(
+        isNYD ? `It is ${currentYear}.` : `It's not ${currentYear + 1} Yet`,
+    );
+    let subtitle = $derived(isNYD ? "Happy New Year!" : "But it will be in...");
+    let days = $derived(isNYD ? 0 : Math.floor(diff / (1000 * 60 * 60 * 24)));
+    let hours = $derived(
+        isNYD
+            ? 0
+            : Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+    );
+    let minutes = $derived(
+        isNYD ? 0 : Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+    );
+    let seconds = $derived(isNYD ? 0 : Math.floor((diff % (1000 * 60)) / 1000));
 
     onMount(() => {
-        updateCountdown();
-        setInterval(() => updateCountdown(), 1000);
+        const interval = setInterval(() => {
+            now = new Date();
+        }, 1000);
+
+        return () => clearInterval(interval);
     });
 </script>
 
