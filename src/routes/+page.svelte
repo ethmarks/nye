@@ -28,13 +28,8 @@
         currentYear = getYear();
 
         const now = new Date();
-        const beforeJan2 = now < new Date(currentYear + 1, 0, 2, 0, 0, 0);
-        const isNYD = !beforeJan2 && now.getDate() === 1;
-
-        let newyear = beforeJan2
-            ? new Date(currentYear, 11, 31, 0, 0, 0)
-            : new Date(currentYear + 1, 11, 31, 0, 0, 0);
-
+        const isNYD = now.getMonth() === 0 && now.getDate() === 1;
+        let newyear = new Date(currentYear + 1, 0, 1, 0, 0, 0);
         const diff = newyear - now;
 
         if (isNYD) {
