@@ -1,5 +1,6 @@
 <script>
     import { onMount } from "svelte";
+    import { invalidate } from "$app/navigation";
 
     let { data } = $props();
 
@@ -78,6 +79,16 @@
     );
 
     onMount(() => {
+        // Check if timezone cookie matches user's actual timezone
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        if (data.timezone !== userTimezone) {
+            // Set the correct timezone cookie
+            document.cookie = `timezone=${userTimezone}; path=/; max-age=31536000; SameSite=Lax`;
+            // Invalidate to reload with correct timezone
+            invalidate("app:timezone");
+        }
+
         const interval = setInterval(() => {
             now = new Date();
         }, 1000);
